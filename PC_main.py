@@ -8,10 +8,10 @@ serRead_timeout_sec = 10
 Switches = [
     # Name, Default value, key. Sending value will be x * 2^index
     # list can added
-    ['Power-On', True, 'PowerOn'],
-    ['DebugSW-On', True, 'DebugSW'],
-#    ['Ex-SW1-On', False, 'ExSW1'],
-#    ['Ex-SW2-On', False, 'ExSW2'],
+    ['Relay1_Power-On', True, 'PowerOn'],
+    ['Relay2_DebugSW-On', True, 'DebugSW'],
+    ['Relay3_Ex-SW1-On', False, 'ExSW1'],
+    ['Relay4_Ex-SW2-On', False, 'ExSW2'],
 ]
 
 def layout_gen(comlist_ready):
@@ -65,13 +65,16 @@ def send_data_serial(serport,values):
                 message_new.append("ACK : Fail wrong data (" + received_str + ")")
                 break
         else:
+            i = i + 1
             print("waiting ACK...")
+            if i == (serRead_timeout_sec // 2):
+                serport.write(bytes(str(val).encode()))
+                message_new.append("RETRY : Resending..")
+            if i > serRead_timeout_sec:
+                print("timeout")
+                message_new.append("Error : NO ACK Timeout")
+                break
 
-        i = i + 1
-        if i > serRead_timeout_sec:
-            print("timeout")
-            message_new.append("Error : NO ACK Timeout")
-            break
     return message_new
 
 
