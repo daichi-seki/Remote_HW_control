@@ -1,45 +1,56 @@
-from .serialhw import SerialDevice
 
-class UNOCls(SerialDevice):
+from .cmn_const import (def_ser_timeout_sec,
+                        def_serial_device_list, def_switch_list)
+from .SerialDevice import SerialDeviceCls
+
+
+class UNOCls(SerialDeviceCls):
     def __init__(self, serport):
         self.serport = serport
         self.devname = 'UNO'
 
-def send_data_serial_UNO(serport, values):
-    from .cmn_const import def_ser_timeout_sec, def_switch_list
-    val = 0
-    message_new = []
+    def send_data_serial(self, values):
 
-    for index, sw in enumerate(def_switch_list, start=0):
-        val = val + (values[sw[2]] * (2 ** index))
+        val = 0
+        message_new = []
 
-    serport.write(bytes(str(val).encode()))
-    message_new.append("REQ : " + str(val))
+        for index, sw in enumerate(def_switch_list, start=0):
+            val = val + (values[sw[2]] * (2 ** index))
 
-    serport.flush()
-    print(bytes(str(val).encode()))
+        self.serport.write(bytes(str(val).encode()))
+        message_new.append("REQ : " + str(val))
 
-    i = 0
-    while True:
-        received_raw = serport.readline()
-        if len(received_raw) > 0:
-            received_str = received_raw.decode()
-            print(received_str)
-            print(val)
-            if str(val) == received_str:
-                message_new.append("ACK : Success (" + str(val) + ")")
-                break
+        self.serport.flush()
+        print(bytes(str(val).encode()))
+
+        i = 0
+        while True:
+            received_raw = self.serport.readline()
+            if len(received_raw) > 0:
+                try:
+                    received_str = received_raw.decode()
+                    print(received_str)
+                    print(val)
+                    if str(val) == received_str:
+                        message_new.append("ACK : Success (" + str(val) + ")")
+                        break
+                    else:
+                        message_new.append(
+                            "ACK : Fail wrong data (" + received_str + ")")
+                        break
+                except Exception as u:
+                    print(u)
+                    message_new = [
+                        "ERROR : Received data is not decodable. Please check COM port"]
+                    break
             else:
-                message_new.append("ACK : Fail wrong data (" + received_str + ")")
-                break
-        else:
-            i = i + 1
-            print("waiting ACK...")
-            if i == (def_ser_timeout_sec // 2):
-                serport.write(bytes(str(val).encode()))
-                message_new.append("RETRY : Resending..")
-            if i > def_ser_timeout_sec:
-                print("timeout")
-                message_new.append("Error : NO ACK Timeout")
-                break
-    return message_new
+                i = i + 1
+                print("waiting ACK...")
+                if i == (def_ser_timeout_sec // 2):
+                    self.serport.write(bytes(str(val).encode()))
+                    message_new.append("RETRY : Resending..")
+                if i > def_ser_timeout_sec:
+                    print("timeout")
+                    message_new.append("Error : NO ACK Timeout")
+                    break
+        return message_new
