@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import serial
+import os
 
 from .layout import layout_gen
 from .dlp4 import DLP4Cls
@@ -7,6 +8,14 @@ from .uno import UNOCls
 from .cmn_const import (def_ser_timeout_sec,
                         def_serial_device_list, def_switch_list)
 from .serialhw import search_com_port
+
+import sys
+from pathlib import Path
+
+
+def resource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', str(Path(__file__).absolute().parent))
+    return str(Path(base_path).joinpath(relative_path))
 
 
 def main():
@@ -26,7 +35,8 @@ def gui_control(comlist_ready):
 
     # Prepare window
     sg.theme('Dark Blue 3')
-    window = sg.Window('Switch control for Bench ', layout_gen(comlist_ready))
+    window = sg.Window('Switch control for Bench ', layout=layout_gen(
+        comlist_ready), icon=resource_path('icon.ico'))
 
     # Get window event (Comport open)
     while True:
