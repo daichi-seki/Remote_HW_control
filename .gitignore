@@ -8492,3 +8492,7 @@ __pycache__/PC_main.cpython-37.pyc
 __pycache__/main.cpython-37.pyc
 .vscode/launch.json
 
+RemoteHWControl/cmn_const.py.bak
+RemoteHWControl/layout.py.bak
+RemoteHWControl/remote_control.py.bak
+main.spec.bak
