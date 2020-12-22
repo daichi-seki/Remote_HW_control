@@ -19,7 +19,8 @@ pip install pyserial
 pip install pysimplegui
 ```
 
-* Exe is included for Windows at /dist/PC_main.exe
+* Exe is included for Windows at /dist/main.exe
+* For exe generation, please modify main.spec and run pyinstaller main.spec
 
 # Note
 I don't test environments under Linux and Mac.
