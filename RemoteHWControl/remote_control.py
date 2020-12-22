@@ -6,7 +6,7 @@ from .layout import layout_gen
 from .dlp4 import DLP4Cls
 from .uno import UNOCls
 from .cmn_const import (def_ser_timeout_sec,
-                        def_serial_device_list, def_switch_list)
+                        def_serial_device_list, def_switch_list, def_pulse_eventlist)
 from .serialhw import search_com_port
 
 import sys
@@ -54,7 +54,7 @@ def gui_control(comlist_ready):
             window['Com_selected'].update(
                 values=search_com_port(), set_to_index=0)
 
-        if event == 'Send':
+        if (event == 'Send') or (event in def_pulse_eventlist):
             sg.popup("Error : Please Open port firstly")
 
         if event == 'Open Port':
@@ -92,7 +92,20 @@ def gui_control(comlist_ready):
                         window['Messages'].update(
                             str(values["Messages"] + '\n'.join(message_new)))
                         print(message_new)
-    # while
+
+                    if event in def_pulse_eventlist:
+                        print(values)
+                        for i in def_switch_list:
+                            if i[3] == event:
+                                values[i[2]] = not values[i[2]]
+                                message_new = Device.send_data_serial(values)
+                                values[i[2]] = not values[i[2]]
+                                message_new += Device.send_data_serial(values)
+                                window['Messages'].update(
+                                    str(values["Messages"] + '\n'.join(message_new)))
+                                print(message_new)
+
+                        # while
     window.close()
 
 

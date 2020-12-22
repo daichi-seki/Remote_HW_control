@@ -3,10 +3,10 @@
 block_cipher = None
 
 
-a = Analysis(['main.py', 'cd', 'c:\\Users\\daich\\Remote_HW_control'],
+a = Analysis(['main.py'],
              pathex=['C:\\Users\\daich\\Remote_HW_control'],
              binaries=[],
-             datas=[],
+             datas=[('C:\\Users\\daich\\Remote_HW_control\\RemoteHWControl\\icon.ico','.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -30,4 +30,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False , icon='icon.ico')
+          console=False , icon='C:\\Users\\daich\\Remote_HW_control\\RemoteHWControl\\icon.ico')
